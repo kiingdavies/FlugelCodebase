@@ -4,26 +4,17 @@ provider "aws" {
 
 resource "aws_s3_bucket" "my-s3-bucket" {
   bucket_prefix = var.bucket_prefix
-  acl           = var.acl
+  # acl           = var.acl
 
-  versioning {
-    enabled = var.versioning
-  }
+  # versioning {
+  #   enabled = true
+  # }
 
   tags = {
-    Name       = "Flugel"
-    Environment = "Dev"
+    Name = var.tag
+    Environment = "InfraTeam"
   }
 
-  replication_configuration {
-   rules {
-      rules {
-      id = "rule1"
-      owner = "InfraTeam"
-      status = "Enabled"
-    }
-   }
-  }
 }
 
 

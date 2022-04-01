@@ -9,14 +9,20 @@ variable "bucket_prefix" {
     default     = "my-s3bucket-"
 }
 
-variable "versioning" {
-    type        = bool
-    description = "(Optional) A state of versioning."
-    default     = true
-}
+# variable "versioning" {
+#     type        = bool
+#     description = "(Optional) A state of versioning."
+#     default     = true
+# }
 
-variable "acl" {
+# variable "acl" {
+#     type        = string
+#     description = " Defaults to public-read"
+#     default     = "public-read"
+# }
+
+variable "tag" {
     type        = string
-    description = " Defaults to public-read"
-    default     = "public-read"
+    description = "The name of the S3 bucket tag"
+    default     = "Flugel"
 }

@@ -14,59 +14,76 @@ resource "local_file" "private_key" {
     file_permission = 0400	
 }
 
-
 resource "aws_key_pair" "key" {
   key_name   = "websitekey"
   public_key = tls_private_key.webkey.public_key_openssh
 }
 
+# Default Vpc
+resource "aws_default_vpc" "default" {
+  tags = {
+    Name = "Default VPC"
+  }  
+
+}
+
 #Create security group with firewall rules
-resource "aws_security_group" "security_jenkins_grp" {
+resource "aws_security_group" "security" {
   name        = var.security_group
-  description = "security group for terraform"
+  description = "Allows ssh and http connection"
+  vpc_id = aws_default_vpc.default.id
+
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
- ingress {
+    description = "SSH"
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
- # outbound rule
-  egress {
-    from_port   = 0
-    to_port     = 65535
+  ingress {
+    description = "HTTP"
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags= {
-    Name = var.security_group
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "websecuritygroup"
   }
 }
 
-resource "aws_instance" "myFirstInstance" {
+resource "aws_instance" "web" {
   ami           = var.ami_id
-  key_name = var.key_name
   instance_type = var.instance_type
-  security_groups= [var.security_group]
-  tags= {
-    Name = var.tag_name
-  }
-}
+  key_name= aws_key_pair.key.key_name
+  security_groups =  [var.security_group]
 
-# Create Elastic IP address
-resource "aws_eip" "myFirstInstance" {
-  vpc      = true
-  instance = aws_instance.myFirstInstance.id
-tags= {
-    Name = "terraform_elastic_ip"
+ connection {
+    type     = "ssh"
+    user     = "ec2-user"
+    private_key = tls_private_key.webkey.private_key_pem
+    host     = aws_instance.web.public_ip
+  }
+
+ provisioner "remote-exec" {
+    inline = [
+      "sudo yum install httpd php git -y",
+      "sudo systemctl restart httpd",
+      "sudo systemctl enable httpd",	
+     ]
+  }
+
+  tags = {
+    Name = "WebOS"
   }
 }
