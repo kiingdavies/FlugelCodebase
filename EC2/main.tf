@@ -22,7 +22,8 @@ resource "aws_key_pair" "key" {
 # Default Vpc
 resource "aws_default_vpc" "default" {
   tags = {
-    Name = "Default VPC"
+    Name = "Flugel"
+    Environment = "InfraTeam"
   }  
 
 }

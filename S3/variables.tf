@@ -21,8 +21,14 @@ variable "bucket_prefix" {
 #     default     = "public-read"
 # }
 
-variable "tag" {
+variable "tag1" {
     type        = string
     description = "The name of the S3 bucket tag"
     default     = "Flugel"
+}
+
+variable "tag2" {
+    type        = string
+    description = "The name of the S3 bucket tag2"
+    default     = "InfraTeam"
 }
