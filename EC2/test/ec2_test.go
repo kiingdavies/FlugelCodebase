@@ -10,7 +10,7 @@ import (
 
 func TestTerraformS3Example(t *testing.T) {
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		TerraformDir: "./",
+		TerraformDir: "../",
 
 		Vars: map[string]interface{}{	
 			"Name": "Flugel",
